@@ -8,8 +8,17 @@ const recordSchema = mongoose.Schema({
     length: Number,
     latitude: Number,
     longitude: Number,
-    timeStamp: Timestamp,
-})
+    timeStamp: {
+        type: String,
+        default: new Date().toLocaleString()
+    },
+    img: {
+        data: Buffer,
+        fileName: String
+    }
+});
+
+module.exports = mongoose.model('record', recordSchema);
 
 
 // to get current date 

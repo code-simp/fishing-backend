@@ -10,7 +10,6 @@ const recordSchema = mongoose.Schema({
     longitude: Number,
     timeStamp: {
         type: String,
-        default: new Date().toLocaleString()
     },
     img: {
         data: Buffer,

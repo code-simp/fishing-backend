@@ -18,8 +18,10 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html')
 })
 
-app.post('/newRecord', (req, res) => {
-    console.log(req.body)
+app.post('/newRecord', upload.single("image"), async (req, res, next) => {
+    console.log(req.file)
+    const buffer = await sharp(req.file.buffer).resize(140, 140).toBuffer();
+    console.log(buffer)
     const record = new Record({
         name: req.body.name,
         species: req.body.species,
@@ -27,7 +29,11 @@ app.post('/newRecord', (req, res) => {
         length: req.body.length,
         latitude: req.body.latitude,
         longitude: req.body.longitude,
-        timeStamp: new Date().toLocaleString()
+        timeStamp: new Date().toLocaleString(),
+        img: {
+            data: buffer,
+            fileName: req.file.mimetype
+        }
     });
     record.save()
 

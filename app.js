@@ -36,20 +36,34 @@ app.post('/newRecord', upload.single("image"), async (req, res, next) => {
             imgName: req.file.originalname
         }
     });
-    record.save()
+    record.save();
 
 });
 
-app.get('/image', (req, res) => {
-    const object = Record.find({ _id: '61f432c39eb29315d10c5176' }, (err, docs) => {
-        var i = 0
-        for (i in docs) {
-            var data = docs[i].img.data
-            var name = docs[i].img.imgName
-            fs.writeFileSync(`./public/images/${name}`, data)
+app.get('/allRecords', (req, res) => {
+    Record.find({}).sort({ timeStamp: -1 }).exec((err, docs) => {
+        if (err) {
+            res.send(err);
         }
-    })
-})
+        else if (docs.length == 0) {
+            res.send('no documents found');
+        }
+        else {
+            res.send(docs);
+        }
+    });
+});
+
+// app.get('/image', (req, res) => {
+//     const object = Record.find({ _id: '61f432c39eb29315d10c5176' }, (err, docs) => {
+//         var i = 0
+//         for (i in docs) {
+//             var data = docs[i].img.data
+//             var name = docs[i].img.imgName
+//             fs.writeFileSync(`./public/images/${name}`, data)
+//         }
+//     })
+// })
 
 app.listen(PORT, () => {
     console.log(`app is up and running on ${PORT}`)

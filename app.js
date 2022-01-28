@@ -6,6 +6,7 @@ const multer = require('multer');
 const sharp = require('sharp');
 const storage = multer.memoryStorage();
 const Record = require('./models/records.js')
+const fs = require("fs");
 
 var upload = multer({
     storage
@@ -19,7 +20,6 @@ app.get('/', (req, res) => {
 })
 
 app.post('/newRecord', upload.single("image"), async (req, res, next) => {
-    console.log(req.file)
     const buffer = await sharp(req.file.buffer).resize(140, 140).toBuffer();
     console.log(buffer)
     const record = new Record({
@@ -32,11 +32,23 @@ app.post('/newRecord', upload.single("image"), async (req, res, next) => {
         timeStamp: new Date().toLocaleString(),
         img: {
             data: buffer,
-            fileName: req.file.mimetype
+            fileName: req.file.mimetype,
+            imgName: req.file.originalname
         }
     });
     record.save()
 
+});
+
+app.get('/image', (req, res) => {
+    const object = Record.find({ _id: '61f432c39eb29315d10c5176' }, (err, docs) => {
+        var i = 0
+        for (i in docs) {
+            var data = docs[i].img.data
+            var name = docs[i].img.imgName
+            fs.writeFileSync(`./public/images/${name}`, data)
+        }
+    })
 })
 
 app.listen(PORT, () => {

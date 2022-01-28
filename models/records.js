@@ -13,7 +13,8 @@ const recordSchema = mongoose.Schema({
     },
     img: {
         data: Buffer,
-        fileName: String
+        fileName: String,
+        imgName: String
     }
 });
 

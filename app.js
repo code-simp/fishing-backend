@@ -21,7 +21,6 @@ app.get('/', (req, res) => {
 
 app.post('/newRecord', upload.single("image"), async (req, res, next) => {
     const buffer = await sharp(req.file.buffer).resize(140, 140).toBuffer();
-    console.log(buffer)
     const record = new Record({
         name: req.body.name,
         species: req.body.species,
@@ -36,7 +35,12 @@ app.post('/newRecord', upload.single("image"), async (req, res, next) => {
             imgName: req.file.originalname
         }
     });
-    record.save();
+    record.save((err) => {
+        if (err) {
+            res.send(err);
+        }
+    });
+    res.send('successfully added the record');
 
 });
 

@@ -23,6 +23,5 @@ const recordSchema = mongoose.Schema({
 // exporting the module to make use in queues.js 
 module.exports = mongoose.model('record', recordSchema);
 
-
 // to get current date 
 // new Date().toLocaleString();

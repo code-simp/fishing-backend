@@ -9,8 +9,8 @@ describe('GET /', () => {
     test('server returns status 200', async () => {
         const response = await request(appTest).get('/');
         expect(response.statusCode).toBe(200);
-    })
-})
+    });
+});
 
 // testing the GET /allRecords method to see if it also 
 // returns this particular document which already exists
@@ -35,4 +35,4 @@ describe('GET /allRecords', () => {
         const response = await request(appTest).get('/allRecords');
         expect(response.body).toContainEqual(checkDoc);
     })
-})
+});

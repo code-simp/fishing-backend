@@ -3,7 +3,7 @@ A Node.js based server that is capable of :
 1. accepting user's records of a fish and also an image, that the system will automatically resize to 140x140px
 2. retrieving all the current records from the database
 
-Timeline of branches
+###### Timeline of branches
 initially started using main --> master --> test
 
 Default branch with all working code : test

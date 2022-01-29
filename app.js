@@ -5,7 +5,8 @@ const bodyParser = require('body-parser')
 const multer = require('multer');
 const sharp = require('sharp');
 const storage = multer.memoryStorage();
-const Record = require('./models/records.js')
+const Record = require('./models/records.js');
+const { serialize, deserialize } = require("bson")
 const fs = require("fs");
 var upload = multer({
     storage
@@ -20,20 +21,22 @@ const delQueue = new Queue('delQueue', { redis: { port: 6379, host: '127.0.0.1' 
 
 // creating fucntions to handle jobs
 resizeQueue.process(async (job, done) => {
-    let obj = job.data.buffer.data;
-    let buffer = Buffer.from(JSON.stringify(obj));
-    console.log(buffer)
-    const actualBuffer = await sharp(buffer).resize(140, 140).toBuffer();
-    fs.writeFileSync(`./public/images/${job.data.tempFile}`, actualBuffer);
+    // let obj = job.data.buffer;
+    // let buffer = Buffer.from(JSON.stringify(obj));
+    // console.log(buffer)
+    const photoB = deserialize(job.data.photo)
+    console.log(photoB)
+    // const actualBuffer = await sharp(buffer).resize(140, 140).toBuffer();
+    // fs.writeFileSync(`./public/images/${job.data.tempFile}`, actualBuffer);
 
-    // calling the upload queue
-    uploadQueue.add({
-        tempFile: job.data.tempFile,
-        body: job.data.body,
-        imgName: job.data.imgName
-    });
+    // // calling the upload queue
+    // uploadQueue.add({
+    //     tempFile: job.data.tempFile,
+    //     body: job.data.body,
+    //     imgName: job.data.imgName
+    // });
 
-    done();
+    // done();
 });
 
 uploadQueue.process(async (job, done) => {
@@ -131,7 +134,10 @@ app.post('/newRecord', upload.single("image"), async (req, res, next) => {
     const tempFile = `${tempName}.${req.file.mimetype.split('/')[1]}`
     // const resizeData = ;
     // calling the enqueue function
+    console.log(req.file.buffer);
+    const photo = serialize(req.file)
     resizeQueue.add({
+        photo: photo,
         buffer: req.file.buffer,
         tempFile: tempFile,
         body: req.body,

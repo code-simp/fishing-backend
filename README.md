@@ -21,6 +21,33 @@ to get all the current records from the database
 
 ## How it works
 
+The initial GET / method sends out a html file for you to test the POST method
+once entered the details and uploaded the image,
+it would trigger the POST /newRecord method to receive the data and the image
 
-the image would be resized to 140x140 px in the background
+an uuid is generated and henceforth that would be the name of the image to maintain uniqueness
+A background job gets enqueued to resize the image to 140x140
+and it immediately sends a response stating the record has been inserted
+
+## Background Jobs
+
+1. implemented using bull and redis
+2. once the resize image job is queued, the image is temporarily stored in the file system of server
+3. this job further enqueues a process to upload the resized image to my firebase storage
+4. once uploaded, it enqueues the job to push the data along with the firebase image URL to mongodb database
+5. once pushed, it finally enqueues the process to delete the temporarily stored image from the fileSystem
+6. You can notice from the console that the user gets the confirmation then the job gets completed
+7. additional info's commented out in the code
+
+## Unit Tests
+
+Jest and supertest is used to test the working of both the GET methods 
+the index.js file contains the code meant only to test
+index.js has an instance "appTest" that listens to, on indexTest.js
+
+the __tests__ folder contains the test script 
+
+to run test open a new terminal that points to the current dir. and type 
+>npm run test
+
 

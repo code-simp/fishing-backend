@@ -12,6 +12,15 @@ A Node.js based server that is capable of :
 
 >4. type http://localhost:3000/ in your browser
 
+#### NOTE
+Do keep in mind that the job queues make use of a datastore called redis,
+I do not have a cluster for redis and hence the code still makes use of locally stored redis
+hence you need to have redis configured on your machine to run the code
+to configure redis on your machine visit https://redis.io/documentation
+
+once configured, head on to ./jobQueues/queues.js
+and change rPORT and rHOST (in line 13) accordingly
+
 Now you'd be having a minimal HTML form to test out the application
 you can fill in the form and also upload an image of the fish to store your beautiful memories
 once clicked on submit, you'd get a response stating "successfully added the record"
@@ -49,5 +58,7 @@ the __tests__ folder contains the test script
 
 to run test open a new terminal that points to the current dir. and type 
 >npm run test
+
+the result would be displayed in terms of how many test cases passed
 
 

@@ -3,6 +3,11 @@ A Node.js based server that is capable of :
 1. accepting user's records of a fish and also an image, that the system will automatically resize to 140x140px
 2. retrieving all the current records from the database
 
+Timeline of branches
+initially started using main --> master --> test
+
+Default branch with all working code : test
+
 #### Steps to install
 >1. git clone https://github.com/code-simp/fishing-backend.git
 
@@ -38,6 +43,9 @@ an uuid is generated and henceforth that would be the name of the image to maint
 A background job gets enqueued to resize the image to 140x140
 and it immediately sends a response stating the record has been inserted
 
+Note that the image is actually stored on firebase cloud storage and the link to the image along with its original name 
+will be stored in the mongodb database.
+
 ## Background Jobs
 
 1. implemented using bull and redis
@@ -60,5 +68,8 @@ to run test open a new terminal that points to the current dir. and type
 >npm run test
 
 the result would be displayed in terms of how many test cases passed
+
+## Working
+https://youtu.be/BJtFBKjR_lg
 
 

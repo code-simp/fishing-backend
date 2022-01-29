@@ -12,12 +12,43 @@ var upload = multer({
     storage
 });
 
+// firebase cloud storage to store images
+
+const firebaseAdmin = require('firebase-admin');
+const { v4: uuidv4 } = require('uuid');
+const serviceAccount = require('./fishing-backend-firebase-adminsdk-6suc4-711fa58c49.json');
+
+const admin = firebaseAdmin.initializeApp({
+    credential: firebaseAdmin.credential.cert(serviceAccount),
+});
+
+const storageRef = admin.storage().bucket(`gs://fishing-backend.appspot.com`);
+
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html')
 })
+
+// Later needs to cut pasted into the post function
+async function uploadImage(path, filename) {
+    const storage = await storageRef.upload(path, {
+        public: true,
+        destination: `${filename}`,
+        metadata: {
+            firebaseStorageDownloadTokens: uuidv4(),
+        }
+    });
+    return storage[0].metadata.mediaLink;
+}
+
+(async () => {
+    const url = await uploadImage('./public/images/Screenshot 2022-01-18 at 10.47.03 PM.png', "Screenshot 2022-01-18 at 10.47.03 PM.png");
+    console.log(url);
+})();
+
 
 app.post('/newRecord', upload.single("image"), async (req, res, next) => {
     const buffer = await sharp(req.file.buffer).resize(140, 140).toBuffer();

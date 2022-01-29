@@ -14,16 +14,16 @@ A Node.js based server that is capable of :
 
 #### NOTE
 Do keep in mind that the job queues make use of a datastore called redis,
-I do not have a cluster for redis and hence the code still makes use of locally stored redis
+I do not have a cluster for redis and hence the code still makes use of locally stored redis, 
 hence you need to have redis configured on your machine to run the code
 to configure redis on your machine visit https://redis.io/documentation
 
 once configured, head on to ./jobQueues/queues.js
 and change rPORT and rHOST (in line 13) accordingly
 
-Now you'd be having a minimal HTML form to test out the application
-you can fill in the form and also upload an image of the fish to store your beautiful memories
-once clicked on submit, you'd get a response stating "successfully added the record"
+Now you'd be having a minimal HTML form to test out the application.
+you can fill in the form and also upload an image of the fish to store your beautiful memories.
+once clicked on submit, you'd get a response stating "successfully added the record".
 
 you can additionally type in http://localhost:3000/allRecords
 to get all the current records from the database
@@ -32,7 +32,7 @@ to get all the current records from the database
 
 The initial GET / method sends out a html file for you to test the POST method
 once entered the details and uploaded the image,
-it would trigger the POST /newRecord method to receive the data and the image
+it would trigger the POST /newRecord method to receive the data and the image.
 
 an uuid is generated and henceforth that would be the name of the image to maintain uniqueness
 A background job gets enqueued to resize the image to 140x140

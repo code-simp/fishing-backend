@@ -44,14 +44,26 @@ async function uploadImage(path, filename) {
     return storage[0].metadata.mediaLink;
 }
 
-(async () => {
-    const url = await uploadImage('./public/images/Screenshot 2022-01-18 at 10.47.03 PM.png', "Screenshot 2022-01-18 at 10.47.03 PM.png");
-    console.log(url);
-})();
+// (async () => {
+//     const url = await uploadImage('./public/images/Screenshot 2022-01-28 at 12.04.47 PM.png', "test.png");
+//     console.log(url);
+//     const tempName = uuidv4();
+//     console.log(tempName);
+// })();
 
 
 app.post('/newRecord', upload.single("image"), async (req, res, next) => {
+    // resizing the image
     const buffer = await sharp(req.file.buffer).resize(140, 140).toBuffer();
+    const tempName = uuidv4();
+    const tempFile = `${tempName}.${req.file.mimetype.split('/')[1]}`
+    fs.writeFileSync(`./public/images/${tempFile}`, buffer);
+
+    // uploading the image to firebase cloud storage
+    const url = await uploadImage(`./public/images/${tempFile}`, `${tempFile}`);
+    console.log(url)
+
+    // pushing the attributes and resized image link to database
     const record = new Record({
         name: req.body.name,
         species: req.body.species,
@@ -61,8 +73,7 @@ app.post('/newRecord', upload.single("image"), async (req, res, next) => {
         longitude: req.body.longitude,
         timeStamp: new Date().toLocaleString(),
         img: {
-            data: buffer,
-            fileName: req.file.mimetype,
+            link: url,
             imgName: req.file.originalname
         }
     });
@@ -71,6 +82,20 @@ app.post('/newRecord', upload.single("image"), async (req, res, next) => {
             res.send(err);
         }
     });
+
+    // delete the temp image stored on server
+    fs.stat(`./public/images/${tempFile}`, function (err, stats) {
+        if (err) {
+            return console.error(err);
+        }
+
+        fs.unlink(`./public/images/${tempFile}`, function (err) {
+            if (err) return console.log(err);
+            console.log('file deleted successfully');
+        });
+    });
+
+    // send success message
     res.send('successfully added the record');
 
 });
@@ -88,17 +113,6 @@ app.get('/allRecords', (req, res) => {
         }
     });
 });
-
-// app.get('/image', (req, res) => {
-//     const object = Record.find({ _id: '61f432c39eb29315d10c5176' }, (err, docs) => {
-//         var i = 0
-//         for (i in docs) {
-//             var data = docs[i].img.data
-//             var name = docs[i].img.imgName
-//             fs.writeFileSync(`./public/images/${name}`, data)
-//         }
-//     })
-// })
 
 app.listen(PORT, () => {
     console.log(`app is up and running on ${PORT}`)

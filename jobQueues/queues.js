@@ -4,12 +4,16 @@ const storage = multer.memoryStorage();
 const Record = require('../models/records.js');
 const fs = require("fs");
 
+// replace your redis port and host in here
+const rPORT = 6379;
+const rHOST = '127.0.0.1';
+
 // require bull for queuing operations `../public/images/${job.data.tempFile}`
 const Queue = require('bull');
-const resize = new Queue('resizeQueue', { redis: { port: 6379, host: '127.0.0.1' } });
-const uploadQueue = new Queue('uploadQueue', { redis: { port: 6379, host: '127.0.0.1' } });
-const dbQueue = new Queue('dbQueue', { redis: { port: 6379, host: '127.0.0.1' } });
-const delQueue = new Queue('delQueue', { redis: { port: 6379, host: '127.0.0.1' } });
+const resize = new Queue('resizeQueue', { redis: { port: rPORT, host: rHOST } });
+const uploadQueue = new Queue('uploadQueue', { redis: { port: rPORT, host: rHOST } });
+const dbQueue = new Queue('dbQueue', { redis: { port: rPORT, host: rHOST } });
+const delQueue = new Queue('delQueue', { redis: { port: rPORT, host: rHOST } });
 
 // creating fucntions to handle jobs
 resize.process(async (job, done) => {

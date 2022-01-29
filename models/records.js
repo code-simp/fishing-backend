@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://127.0.0.1:27017/Fishing');
+mongoose.connect('mongodb+srv://admin-tarun:Tarunnexus9@maincluster.pgzzp.mongodb.net/fishing', { useNewUrlParser: true });
+
 
 const recordSchema = mongoose.Schema({
     name: String,

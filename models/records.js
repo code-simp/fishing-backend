@@ -1,7 +1,9 @@
+// requiring mongoose to connect to mongodb
 const mongoose = require('mongoose');
+// connecting to my mongodb atlas
 mongoose.connect('mongodb+srv://admin-tarun:Tarunnexus9@maincluster.pgzzp.mongodb.net/fishing', { useNewUrlParser: true });
 
-
+// creation of schema for the records
 const recordSchema = mongoose.Schema({
     name: String,
     species: String,
@@ -18,6 +20,7 @@ const recordSchema = mongoose.Schema({
     }
 });
 
+// exporting the module to make use in queues.js 
 module.exports = mongoose.model('record', recordSchema);
 
 

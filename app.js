@@ -6,7 +6,6 @@ const multer = require('multer');
 const sharp = require('sharp');
 const storage = multer.memoryStorage();
 const Record = require('./models/records.js');
-const { serialize, deserialize } = require("bson")
 const fs = require("fs");
 var upload = multer({
     storage
@@ -21,27 +20,22 @@ const delQueue = new Queue('delQueue', { redis: { port: 6379, host: '127.0.0.1' 
 
 // creating fucntions to handle jobs
 resizeQueue.process(async (job, done) => {
-    // let obj = job.data.buffer;
-    // let buffer = Buffer.from(JSON.stringify(obj));
-    // console.log(buffer)
-    const photoB = deserialize(job.data.photo)
-    console.log(photoB)
-    // const actualBuffer = await sharp(buffer).resize(140, 140).toBuffer();
-    // fs.writeFileSync(`./public/images/${job.data.tempFile}`, actualBuffer);
 
-    // // calling the upload queue
-    // uploadQueue.add({
-    //     tempFile: job.data.tempFile,
-    //     body: job.data.body,
-    //     imgName: job.data.imgName
-    // });
+    const actualBuffer = await sharp(Buffer.from(job.data.bString)).resize(140, 140).toBuffer();
+    fs.writeFileSync(`./public/images/${job.data.tempFile}`, actualBuffer);
 
-    // done();
+    // calling the upload queue
+    uploadQueue.add({
+        tempFile: job.data.tempFile,
+        body: job.data.body,
+        imgName: job.data.imgName
+    });
+
+    done();
 });
 
 uploadQueue.process(async (job, done) => {
     const url = await uploadImage(`./public/images/${job.data.tempFile}`, `${job.data.tempFile}`);
-    console.log(url);
 
     // calling the DB push function
     dbQueue.add({
@@ -93,6 +87,7 @@ delQueue.process(async (job, done) => {
             console.log('file deleted successfully');
         });
     });
+    console.log('done queues');
     done();
 })
 
@@ -116,7 +111,7 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html')
 })
 
-// Later needs to cut pasted into the post function
+// A function that takes care of uploading the image to my firebase storage
 async function uploadImage(path, filename) {
     const storage = await storageRef.upload(path, {
         public: true,
@@ -132,58 +127,18 @@ app.post('/newRecord', upload.single("image"), async (req, res, next) => {
     // resizing the image
     const tempName = uuidv4();
     const tempFile = `${tempName}.${req.file.mimetype.split('/')[1]}`
-    // const resizeData = ;
+
     // calling the enqueue function
-    console.log(req.file.buffer);
-    const photo = serialize(req.file)
+    const bufferJson = req.file.buffer.toJSON()
     resizeQueue.add({
-        photo: photo,
+        bString: bufferJson,
         buffer: req.file.buffer,
         tempFile: tempFile,
         body: req.body,
         imgName: req.file.originalname
     });
 
-
-    // const buffer = await sharp(req.file.buffer).resize(140, 140).toBuffer();
-    // const tempFile = `${tempName}.${req.file.mimetype.split('/')[1]}`
-    // fs.writeFileSync(`./public/images/${tempFile}`, buffer);
-
-    // uploading the image to firebase cloud storage
-    // const url = await uploadImage(`./public/images/${tempFile}`, `${tempFile}`);
-    // console.log(url)
-
-    // pushing the attributes and resized image link to database
-    // const record = new Record({
-    //     name: req.body.name,
-    //     species: req.body.species,
-    //     weight: req.body.weight,
-    //     length: req.body.length,
-    //     latitude: req.body.latitude,
-    //     longitude: req.body.longitude,
-    //     timeStamp: new Date().toLocaleString(),
-    //     img: {
-    //         link: url,
-    //         imgName: req.file.originalname
-    //     }
-    // });
-    // record.save((err) => {
-    //     if (err) {
-    //         res.send(err);
-    //     }
-    // });
-
-    // delete the temp image stored on server
-    // fs.stat(`./public/images/${tempFile}`, function (err, stats) {
-    //     if (err) {
-    //         return console.error(err);
-    //     }
-
-    //     fs.unlink(`./public/images/${tempFile}`, function (err) {
-    //         if (err) return console.log(err);
-    //         console.log('file deleted successfully');
-    //     });
-    // });
+    console.log('done main')
 
     // send success message
     res.send('successfully added the record');

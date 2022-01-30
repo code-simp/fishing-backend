@@ -1,7 +1,7 @@
 // require all the dependencies
 const express = require('express');
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const bodyParser = require('body-parser')
 // multer is used to process images in the backend
 const multer = require('multer');

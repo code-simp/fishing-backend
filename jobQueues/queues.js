@@ -8,6 +8,8 @@ const storage = multer.memoryStorage();
 const Record = require('../models/records.js');
 // filesystem used to store incoming image temporarily on the server
 const fs = require("fs");
+const { dirname } = require('path');
+const appDir = dirname(require.main.filename);
 
 // require bull for queuing operations 
 const Queue = require('bull');
@@ -23,7 +25,7 @@ resize.process(async (job, done) => {
     // code to resize the image
     const actualBuffer = await sharp(Buffer.from(job.data.bString)).resize(140, 140).toBuffer();
     // filesystem storing the image temporarily
-    fs.writeFileSync(`./public/images/${job.data.tempFile}`, actualBuffer);
+    fs.writeFileSync(appDir + `/public/images/${job.data.tempFile}`, actualBuffer);
 
     // calling the upload queue which takes care of uploading
     // the image to my firebase storage
@@ -40,7 +42,7 @@ resize.process(async (job, done) => {
 // uploadQueue takes care of uploading the image to firebase storage
 uploadQueue.process(async (job, done) => {
     // uploadImage is a fucntion written below to upload image to the storage
-    const url = await uploadImage(`./public/images/${job.data.tempFile}`, `${job.data.tempFile}`);
+    const url = await uploadImage(appDir + `/public/images/${job.data.tempFile}`, `${job.data.tempFile}`);
 
     // calling the DB push queue to push all the info/attributes to the mongoDB database
     dbQueue.add({
@@ -87,13 +89,13 @@ dbQueue.process(async (job, done) => {
 // delQueue takes care of deleting the temporarily stored image as it is no longer needed
 delQueue.process(async (job, done) => {
     // checking for the validity of the file if it exists
-    fs.stat(`./public/images/${job.data.tempFile}`, function (err, stats) {
+    fs.stat(appDir + `/public/images/${job.data.tempFile}`, function (err, stats) {
         if (err) {
             return console.error(err);
         }
 
         // deleting the file
-        fs.unlink(`./public/images/${job.data.tempFile}`, function (err) {
+        fs.unlink(appDir + `/public/images/${job.data.tempFile}`, function (err) {
             if (err) return console.log(err);
             console.log('file deleted successfully');
         });

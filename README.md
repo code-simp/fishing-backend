@@ -1,4 +1,13 @@
 # fishing-backend
+Hosted on https://fishing-backend.herokuapp.com/
+
+routes:
+>/ to get the html form
+
+>/allRecords gets back all the existing data from DB
+
+>/newRecord is the POST method to process incoming data
+
 A Node.js based server that is capable of :
 1. accepting user's records of a fish and also an image, that the system will automatically resize to 140x140px
 2. retrieving all the current records from the database

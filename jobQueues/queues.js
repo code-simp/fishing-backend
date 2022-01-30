@@ -9,17 +9,13 @@ const Record = require('../models/records.js');
 // filesystem used to store incoming image temporarily on the server
 const fs = require("fs");
 
-// replace your redis port and host in here
-const rPORT = 6379;
-const rHOST = '127.0.0.1';
-
 // require bull for queuing operations 
 const Queue = require('bull');
 // defining all the queues
-const resize = new Queue('resizeQueue', { redis: { port: rPORT, host: rHOST } });
-const uploadQueue = new Queue('uploadQueue', { redis: { port: rPORT, host: rHOST } });
-const dbQueue = new Queue('dbQueue', { redis: { port: rPORT, host: rHOST } });
-const delQueue = new Queue('delQueue', { redis: { port: rPORT, host: rHOST } });
+const resize = new Queue('resizeQueue', "redis://tarun:Tarunnexus@9@redis-18128.c212.ap-south-1-1.ec2.cloud.redislabs.com:18128/0?allowUsernameInURI=true");
+const uploadQueue = new Queue('uploadQueue', "redis://tarun:Tarunnexus@9@redis-18128.c212.ap-south-1-1.ec2.cloud.redislabs.com:18128/0?allowUsernameInURI=true");
+const dbQueue = new Queue('dbQueue', "redis://tarun:Tarunnexus@9@redis-18128.c212.ap-south-1-1.ec2.cloud.redislabs.com:18128/0?allowUsernameInURI=true");
+const delQueue = new Queue('delQueue', "redis://tarun:Tarunnexus@9@redis-18128.c212.ap-south-1-1.ec2.cloud.redislabs.com:18128/0?allowUsernameInURI=true");
 
 // creating fucntions to handle jobs
 // resize queue takes cares of resizing the image to 140x140 px

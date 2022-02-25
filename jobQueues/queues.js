@@ -14,10 +14,10 @@ const appDir = dirname(require.main.filename);
 // require bull for queuing operations 
 const Queue = require('bull');
 // defining all the queues
-const resize = new Queue('resizeQueue', "redis://tarun:Tarunnexus@9@redis-18128.c212.ap-south-1-1.ec2.cloud.redislabs.com:18128/0?allowUsernameInURI=true");
-const uploadQueue = new Queue('uploadQueue', "redis://tarun:Tarunnexus@9@redis-18128.c212.ap-south-1-1.ec2.cloud.redislabs.com:18128/0?allowUsernameInURI=true");
-const dbQueue = new Queue('dbQueue', "redis://tarun:Tarunnexus@9@redis-18128.c212.ap-south-1-1.ec2.cloud.redislabs.com:18128/0?allowUsernameInURI=true");
-const delQueue = new Queue('delQueue', "redis://tarun:Tarunnexus@9@redis-18128.c212.ap-south-1-1.ec2.cloud.redislabs.com:18128/0?allowUsernameInURI=true");
+const resize = new Queue('resizeQueue', process.env.REDISURL);
+const uploadQueue = new Queue('uploadQueue', process.env.REDISURL);
+const dbQueue = new Queue('dbQueue', process.env.REDISURL);
+const delQueue = new Queue('delQueue', process.env.REDISURL);
 
 // creating fucntions to handle jobs
 // resize queue takes cares of resizing the image to 140x140 px

@@ -1,7 +1,8 @@
 // requiring mongoose to connect to mongodb
+require('dotenv').config();
 const mongoose = require('mongoose');
 // connecting to my mongodb atlas
-mongoose.connect('mongodb+srv://admin-tarun:Tarunnexus9@maincluster.pgzzp.mongodb.net/fishing', { useNewUrlParser: true });
+mongoose.connect(process.env.MONGOURL, { useNewUrlParser: true });
 
 // creation of schema for the records
 const recordSchema = mongoose.Schema({
